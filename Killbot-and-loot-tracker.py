@@ -11,12 +11,12 @@ import time
 minitemprice = 50000000
 
 # Add your Corp or Alliance ID
-allianceID = 99001105
-allianceName = "Seventh Sanctum."
+allianceID = ""
+allianceName = ""
 corporationID = ""
 corpName = ""
-allalliancekillswebhookurl = "https://discord.com/api/webhooks/1040550494185209948/t6cmlErFvq95y61g-hClAFAADiZWMdMKtwIxQ7M1qaLPjqUM42vdAaAnG_9GYzoCm14v"
-lootchannelwebhookurl = "https://discord.com/api/webhooks/1040558610406711296/8sC7atPSoXXsnEUICeyf1H6t5OHfkGlVyxYKrJS14-OH7-4tpa8bJeDKLyW7SVkAdIrP"
+allalliancekillswebhookurl = ""
+lootchannelwebhookurl = ""
 
 global toggle
 toggle = False
