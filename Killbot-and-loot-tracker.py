@@ -12,9 +12,11 @@ minitemprice = 50000000
 
 # Add your Corp or Alliance ID
 allianceID = 99001105
-corporationID = 98512964
-allalliancekillswebhookurl = ""
-lootchannelwebhookurl = ""
+allianceName = "Seventh Sanctum."
+corporationID = ""
+corpName = ""
+allalliancekillswebhookurl = "https://discord.com/api/webhooks/1040550494185209948/t6cmlErFvq95y61g-hClAFAADiZWMdMKtwIxQ7M1qaLPjqUM42vdAaAnG_9GYzoCm14v"
+lootchannelwebhookurl = "https://discord.com/api/webhooks/1040558610406711296/8sC7atPSoXXsnEUICeyf1H6t5OHfkGlVyxYKrJS14-OH7-4tpa8bJeDKLyW7SVkAdIrP"
 
 global toggle
 toggle = False
@@ -38,14 +40,13 @@ def getkill():
           
             killid = (str(urls[i]))
 
-            #-----------------------------------------Comment between these lines to disabled Embeds-----------------------------------------#
-
             page = requests.get(killid)
             soup = BeautifulSoup(page.content, 'html.parser', on_duplicate_attribute='ignore')
 
             imageurl = soup.find("meta", attrs={'name':'og:image'}, content=True)
             image = imageurl["content"] + "?size=64"
 
+            
             tab = soup.find("table",{"class":"table table-condensed"})
             names = tab.findAll("a")[0]
             corps = tab.findAll("a")[1]
@@ -56,6 +57,13 @@ def getkill():
 
             tab3 = soup.find("th",{"class":"hidden-md hidden-xs"})
             involved = tab3.text.strip()
+
+            description = soup.find("meta", attrs={'name':'og:description'}, content=True)
+            cleanDescription = (description["content"])
+            separator = 'Final Blow by '
+            result_1 = cleanDescription.split(separator, 1)[1]
+            separator2 = '. Total Value'
+            result_2 = result_1.split(separator2, 1)[0]
 
             column1 = []
             column2 = []
@@ -70,10 +78,7 @@ def getkill():
                         system = columns2[0].text.split('(',1)[0]
                     else:
                         column1.append(columns1[0].text.strip())
-                        column2.append(columns2[0].text.strip())
-
-            # print(column1)
-            # print(column2)            
+                        column2.append(columns2[0].text.strip())       
 
             for name in names:
                 name = names.get('title')
@@ -90,7 +95,7 @@ def getkill():
                 choosecolour = discord.Colour.red()
             else:
                 choosecolour = discord.Colour.green()
-            
+
             embed = discord.Embed(title=title, url=killid, colour = choosecolour)
             embed.set_thumbnail(url=image)
             embed.add_field(name="Victim", value=name, inline=True)
@@ -101,18 +106,12 @@ def getkill():
             for i in range(len(column1)):
                 embed.add_field(name=column1[i], value=column2[i], inline=True)
 
+            embed.add_field(name="Killed by", value=result_2, inline=True)
+
             webhook = SyncWebhook.from_url(allalliancekillswebhookurl) 
             webhook.send(embed=embed)
 
-            # ------------------------------Enable the below if you dont use the Embed---------------------------#
-            #webhook.send(killid)   
             print("kill reported")
-
-            # --------------------Comment the below out if you do not need the loot tracker-----------------------# 
-            # ---------------------------enable the below if you dont use the embed-------------------------------#
-
-            # page = requests.get(killid)
-            # soup = BeautifulSoup(page.content, 'html.parser', on_duplicate_attribute='ignore')
 
             itemname = []
             quantity = []
@@ -122,7 +121,6 @@ def getkill():
             row = table1.find_all('tr')
 
             for row in table1.find_all('tr'):    
-                #Find all data for each column and add it to array
                 columns = row.find_all("td", {"class": "item_dropped"})
                 if(columns != []):
                     itemname.append(columns[0].text.strip())
@@ -146,25 +144,15 @@ def getkill():
                     global toggle
                     toggle = True
                     valuenumber = "{:,}".format(price[i])
-
                     webhook = SyncWebhook.from_url(lootchannelwebhookurl)    
                     webhook.send(str(quantity[i]) + " " + itemname[i] + "\nValued at " + str(valuenumber))
-
                 else:
                     print("Not Worth Looting")
 
-            print(toggle)
             if toggle == True:
                 webhook = SyncWebhook.from_url(lootchannelwebhookurl) 
-                
-                #--------------------------------if the embed is disabled re-enable this line----------------------------------#
-                #webhook.send(killid)
-
-                #----------------------------disable this line if you do not wish to use embed---------------------------------#
                 webhook.send(embed=embed) 
                 toggle = False
-
-            #--------------------------------- Comment to here to remove loot-tracker------------------------------------------#
 
 while True:
     try:
