@@ -58,12 +58,16 @@ def getkill():
             tab3 = soup.find("th",{"class":"hidden-md hidden-xs"})
             involved = tab3.text.strip()
 
-            description = soup.find("meta", attrs={'name':'og:description'}, content=True)
-            cleanDescription = (description["content"])
-            separator = 'Final Blow by '
-            result_1 = cleanDescription.split(separator, 1)[1]
-            separator2 = '. Total Value'
-            result_2 = result_1.split(separator2, 1)[0]
+            try:
+                description = soup.find("meta", attrs={'name':'og:description'}, content=True)
+                cleanDescription = (description["content"])
+                separator = 'Final Blow by '
+                result_1 = cleanDescription.split(separator, 1)[1]
+                separator2 = '. Total Value'
+                result_2 = result_1.split(separator2, 1)[0]
+                embed.add_field(name="Final Blow by", value=result_2, inline=True)
+            except:
+                pass
 
             column1 = []
             column2 = []
@@ -102,11 +106,8 @@ def getkill():
             embed.add_field(name="Corporation", value=corp, inline=True)
             embed.add_field(name="Alliance", value=alliance, inline=True)
             embed.add_field(name="Involved", value=involved, inline=True)
-
             for i in range(len(column1)):
                 embed.add_field(name=column1[i], value=column2[i], inline=True)
-
-            embed.add_field(name="Killed by", value=result_2, inline=True)
 
             webhook = SyncWebhook.from_url(allalliancekillswebhookurl) 
             webhook.send(embed=embed)
@@ -155,10 +156,10 @@ def getkill():
                 toggle = False
 
 while True:
-    try:
-        getkill()
-    except:
-        print("Connection Lost")
-        pass
+    # try:
+    getkill()
+    # except:
+    #     print("Connection Lost")
+    #     pass
 
 
