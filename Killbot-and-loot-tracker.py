@@ -156,10 +156,10 @@ def getkill():
                 toggle = False
 
 while True:
-    # try:
-    getkill()
-    # except:
-    #     print("Connection Lost")
-    #     pass
+    try:
+        getkill()
+    except:
+        print("Connection Lost")
+        pass
 
 
